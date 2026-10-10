@@ -1,0 +1,865 @@
+<!doctype html>
+<html lang="de">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="robots" content="noindex, nofollow">
+<meta name="referrer" content="no-referrer">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-title" content="Unser Raum">
+<meta name="apple-mobile-web-app-status-bar-style" content="default">
+<meta name="theme-color" content="#F2F3F7" media="(prefers-color-scheme: light)">
+<meta name="theme-color" content="#10121A" media="(prefers-color-scheme: dark)">
+<link rel="apple-touch-icon" href="icon.png">
+<link rel="icon" href="icon.png">
+<title>Unser Raum</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Figtree:wght@400;500;600;700&family=Young+Serif&display=swap">
+<style>
+:root{
+  /* Layout: eine ruhige Spalte wie ein gemeinsames Notizbuch. Oben fest der Name und die Reiter, darunter Einträge nach Tagen. */
+  --bg:#F2F3F7;
+  --surface:#FFFFFF;
+  --sunk:#EBEDF3;
+  --ink:#1C2030;
+  --muted:#5B6276;
+  --line:#DADDE6;
+  --accent:#3D4885;
+  --accent-soft:#E5E7F3;
+  --on-accent:#FFFFFF;
+  --star:#B07A22;
+  --heart:#BE4168;
+  --ok:#2B7451;
+  --ok-soft:#E0EFE7;
+  --warn:#9C5226;
+  --warn-soft:#F5E5DA;
+  --font-display:"Young Serif", Georgia, "Times New Roman", serif;
+  --font-body:"Figtree", system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
+  --r:12px;
+  color-scheme:light;
+}
+@media (prefers-color-scheme: dark){
+  :root{
+    --bg:#10121A; --surface:#181B26; --sunk:#131520; --ink:#E6E8F0; --muted:#9AA1B5; --line:#2A2E3C;
+    --accent:#A8B2EC; --accent-soft:#242945; --on-accent:#10121A; --star:#E3B762; --heart:#EE7D9B;
+    --ok:#7BC8A1; --ok-soft:#1A2D25; --warn:#E3A178; --warn-soft:#32231B; color-scheme:dark;
+  }
+}
+*{box-sizing:border-box}
+html{-webkit-text-size-adjust:100%}
+body{margin:0;background:var(--bg);color:var(--ink);font-family:var(--font-body);font-size:16px;line-height:1.5;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}
+[hidden]{display:none!important}
+.app{max-width:680px;margin:0 auto;padding-inline:16px;padding-block:0 72px}
+.top{position:sticky;top:0;z-index:5;background:var(--bg);margin-inline:-16px;padding-inline:16px;padding-block:18px 0;border-bottom:1px solid var(--line)}
+.brand{display:flex;align-items:center;gap:12px}
+.brand svg{width:26px;height:26px;color:var(--star);flex:none}
+h1{font-family:var(--font-display);font-weight:400;font-size:28px;line-height:1.1;margin:0;letter-spacing:-.01em}
+.today{margin:2px 0 0;color:var(--muted);font-size:14px}
+.tabs{display:flex;gap:2px;overflow-x:auto;margin-top:14px;scrollbar-width:none}
+.tabs::-webkit-scrollbar{display:none}
+.tab{background:none;border:0;border-bottom:2px solid transparent;padding:10px 12px;font:inherit;font-size:15px;font-weight:600;color:var(--muted);cursor:pointer;white-space:nowrap}
+.tab[aria-selected="true"]{color:var(--ink);border-bottom-color:var(--accent)}
+.tab:focus-visible,.btn:focus-visible,.link:focus-visible,summary:focus-visible{outline:2px solid var(--accent);outline-offset:2px;border-radius:6px}
+.notice{margin-top:16px;background:var(--accent-soft);border-radius:var(--r);padding:12px 14px;font-size:14.5px}
+.panel{display:grid;gap:18px;padding-block:20px}
+.intro{margin:0;color:var(--muted);max-width:60ch}
+.sec-h{font-family:var(--font-display);font-weight:400;font-size:19px;line-height:1.25;margin:6px 0 0;text-wrap:balance}
+.composer{background:var(--surface);border:1px solid var(--line);border-radius:var(--r);padding:14px;display:grid;gap:10px}
+.composer:focus-within{border-color:var(--accent)}
+.comp-label{font-family:var(--font-display);font-size:18px}
+.composer textarea{border:0;background:transparent;padding:0;resize:vertical;min-height:72px}
+textarea,input,select{font:inherit;font-size:16px;color:var(--ink);width:100%}
+textarea:focus,input:focus,select:focus{outline:2px solid var(--accent);outline-offset:1px}
+.composer textarea:focus{outline:none}
+.field input,.field select,.field textarea,.addrow input,.addrow select,.inline textarea,.inline input,.gate input{border:1px solid var(--line);background:var(--surface);border-radius:10px;padding:10px 12px}
+.inline textarea,.inline input{background:var(--bg)}
+.comp-foot{display:flex;justify-content:space-between;align-items:center;gap:12px;flex-wrap:wrap}
+.hint{color:var(--muted);font-size:13.5px;min-width:0}
+.btn{font:inherit;font-size:15px;font-weight:600;border-radius:999px;padding:8px 16px;border:1px solid var(--line);background:var(--surface);color:var(--ink);cursor:pointer;white-space:nowrap}
+.btn.primary{background:var(--accent);border-color:var(--accent);color:var(--on-accent)}
+.btn.small{font-size:14px;padding:5px 12px}
+.btn[aria-pressed="true"]{background:var(--accent-soft);border-color:transparent;color:var(--accent)}
+.btn svg{width:15px;height:15px;vertical-align:-2px;margin-right:5px}
+.btn:disabled{opacity:.6;cursor:default}
+.link{border:0;background:none;padding:4px 6px;font:inherit;font-size:14px;font-weight:500;color:var(--muted);cursor:pointer}
+.link:hover{color:var(--ink);text-decoration:underline}
+.link.danger{color:var(--warn)}
+.list,.day{display:grid;gap:10px}
+.day-h{font-family:var(--font-display);font-weight:400;font-size:17px;margin:8px 0 0}
+.card{background:var(--surface);border:1px solid var(--line);border-radius:var(--r);padding:13px 15px;display:grid;gap:8px;min-width:0}
+.who{display:flex;align-items:center;gap:8px;font-size:14px;color:var(--muted);flex-wrap:wrap}
+.who strong{color:var(--ink);font-weight:600}
+.av{width:22px;height:22px;border-radius:50%;display:inline-grid;place-items:center;font-size:11px;font-weight:700;background:var(--accent);color:var(--on-accent);flex:none}
+.av.alt{background:var(--star);color:var(--on-accent)}
+.text{margin:0;white-space:pre-wrap;overflow-wrap:anywhere}
+.acts{display:flex;gap:2px;align-items:center;flex-wrap:wrap;margin-left:-6px}
+.heart-btn{display:inline-flex;align-items:center;gap:5px}
+.heart-btn svg{width:17px;height:17px}
+.heart-btn[aria-pressed="true"]{color:var(--heart)}
+.heart-note{font-size:13.5px;color:var(--heart);display:inline-flex;align-items:center;gap:5px}
+.heart-note svg{width:14px;height:14px}
+.replies{border-left:2px solid var(--accent-soft);padding-left:12px;display:grid;gap:8px}
+.reply .who{font-size:13px}
+.inline{display:grid;gap:8px}
+.row{display:flex;gap:8px;flex-wrap:wrap;align-items:center}
+.confirm{display:inline-flex;align-items:center;gap:6px;flex-wrap:wrap;font-size:14px;color:var(--warn)}
+.meta{font-size:13px;color:var(--muted);font-variant-numeric:tabular-nums}
+.pill{display:inline-flex;align-items:center;font-size:12.5px;font-weight:600;padding:2px 9px;border-radius:999px;white-space:nowrap}
+.pill.ok{background:var(--ok-soft);color:var(--ok)}
+.pill.warn{background:var(--warn-soft);color:var(--warn)}
+.pill.neutral{background:var(--accent-soft);color:var(--accent)}
+.note{margin:0;font-size:14.5px;color:var(--muted);white-space:pre-wrap;overflow-wrap:anywhere}
+.cat-h{font-size:12px;font-weight:600;letter-spacing:.08em;text-transform:uppercase;color:var(--muted);margin:10px 0 0}
+.chips{display:flex;flex-wrap:wrap;gap:6px}
+.chip{font-size:12.5px;font-variant-numeric:tabular-nums;padding:2px 8px;border-radius:999px;background:var(--accent-soft);color:var(--accent)}
+.trust-foot{display:flex;justify-content:space-between;align-items:center;gap:8px;flex-wrap:wrap}
+.review{background:var(--surface);border:1px solid var(--line);border-radius:var(--r);padding:11px 14px;font-size:14.5px;display:flex;gap:10px;align-items:flex-start}
+.review svg{width:18px;height:18px;color:var(--star);flex:none;margin-top:2px}
+.addrow{display:flex;gap:8px;flex-wrap:wrap}
+.addrow input{flex:1 1 220px;min-width:0}
+.addrow select{flex:0 1 200px;min-width:0}
+.form-grid{display:grid;gap:12px}
+.field{display:grid;gap:5px;min-width:0}
+.field label{font-size:13.5px;font-weight:500;color:var(--muted)}
+.two{display:grid;grid-template-columns:repeat(auto-fit,minmax(180px,1fr));gap:12px}
+details.flow{background:var(--surface);border:1px solid var(--line);border-radius:var(--r);padding:12px 15px}
+details.flow summary{cursor:pointer;font-weight:600}
+details.flow ol{margin:10px 0 2px;padding-left:22px;display:grid;gap:6px}
+details.sess{background:var(--surface);border:1px solid var(--line);border-radius:var(--r);padding:12px 15px}
+details.sess summary{cursor:pointer;display:flex;justify-content:space-between;gap:10px;flex-wrap:wrap;font-weight:600}
+details.sess[open] summary{margin-bottom:8px}
+.sess-body{display:grid;gap:10px}
+.sess-body h4{margin:0;font-size:13px;font-weight:600;letter-spacing:.06em;text-transform:uppercase;color:var(--muted)}
+details.done-list summary{cursor:pointer;color:var(--muted);font-size:14.5px;font-weight:500}
+details.done-list .list{margin-top:10px}
+.answer{background:var(--sunk);border-radius:10px;padding:10px 12px;display:grid;gap:4px}
+.empty{color:var(--muted);font-size:15px;padding:16px;border:1px dashed var(--line);border-radius:var(--r);margin:0}
+.toast{position:fixed;left:50%;bottom:calc(18px + env(safe-area-inset-bottom,0px));transform:translateX(-50%);background:var(--ink);color:var(--bg);padding:10px 16px;border-radius:999px;font-size:14px;max-width:calc(100% - 32px);z-index:10}
+.done-text{color:var(--muted);text-decoration:line-through}
+.foot{margin-top:28px;display:flex;justify-content:center}
+.gate{max-width:440px;margin:12vh auto 0;display:grid;gap:14px;text-align:left}
+.gate svg{width:34px;height:34px;color:var(--star)}
+.gate h2{font-family:var(--font-display);font-weight:400;font-size:26px;margin:0}
+.gate p{margin:0;color:var(--muted)}
+.err{color:var(--warn);font-size:14px}
+</style>
+</head>
+<body>
+
+<!-- Zugang: erscheint nur, wenn auf diesem Gerät noch kein persönlicher Link bekannt ist -->
+<div class="app" id="gate" hidden>
+  <div class="gate">
+    <svg viewBox="0 0 24 24" aria-hidden="true"><path fill="currentColor" d="M12 1.5c.7 6 3.6 9.3 10.5 10.5-6.9 1.2-9.8 4.5-10.5 10.5-.7-6-3.6-9.3-10.5-10.5C8.4 10.8 11.3 7.5 12 1.5z"/></svg>
+    <h2>Unser Raum</h2>
+    <p>Öffne deinen persönlichen Link oder füge ihn hier ein. Danach merkt sich dieses Gerät den Zugang.</p>
+    <form id="form-gate" class="form-grid">
+      <input type="text" id="f-gate" autocomplete="off" autocapitalize="off" spellcheck="false" placeholder="Persönlicher Link" aria-label="Persönlicher Link">
+      <div><button class="btn primary" type="submit">Öffnen</button></div>
+      <p class="err" id="gate-err" hidden></p>
+    </form>
+  </div>
+</div>
+
+<div class="app" id="app" hidden>
+  <header class="top">
+    <div class="brand">
+      <svg viewBox="0 0 24 24" aria-hidden="true"><path fill="currentColor" d="M12 1.5c.7 6 3.6 9.3 10.5 10.5-6.9 1.2-9.8 4.5-10.5 10.5-.7-6-3.6-9.3-10.5-10.5C8.4 10.8 11.3 7.5 12 1.5z"/></svg>
+      <div>
+        <h1>Unser Raum</h1>
+        <p class="today" id="today"></p>
+      </div>
+    </div>
+    <nav class="tabs" role="tablist" aria-label="Bereiche">
+      <button class="tab" role="tab" id="tab-btn-gedanken" data-tab="gedanken" aria-controls="tab-gedanken">Gedanken</button>
+      <button class="tab" role="tab" id="tab-btn-versprechen" data-tab="versprechen" aria-controls="tab-versprechen">Versprechen</button>
+      <button class="tab" role="tab" id="tab-btn-vertrauen" data-tab="vertrauen" aria-controls="tab-vertrauen">Vertrauen</button>
+      <button class="tab" role="tab" id="tab-btn-gespraeche" data-tab="gespraeche" aria-controls="tab-gespraeche">Gespräche</button>
+      <button class="tab" role="tab" id="tab-btn-fragen" data-tab="fragen" aria-controls="tab-fragen">Fragen</button>
+    </nav>
+  </header>
+
+  <div class="notice" id="notice" hidden></div>
+
+  <main>
+    <section class="panel" id="tab-gedanken" role="tabpanel" aria-labelledby="tab-btn-gedanken">
+      <form class="composer" id="form-entry">
+        <label class="comp-label" for="f-entry-text">Ein Gedanke von heute</label>
+        <textarea id="f-entry-text" rows="3"></textarea>
+        <div class="comp-foot">
+          <span class="hint">Ein Satz reicht. Schön, schwer oder peinlich, alles darf hier stehen.</span>
+          <button class="btn primary" type="submit">Teilen</button>
+        </div>
+      </form>
+      <div id="list-entries" data-live>
+        <p class="empty">Hier erscheinen eure Gedanken, nach Tagen sortiert. Den ersten schreibst du oben.</p>
+      </div>
+    </section>
+
+    <section class="panel" id="tab-versprechen" role="tabpanel" aria-labelledby="tab-btn-versprechen" hidden>
+      <p class="intro">Alles, was für euch versprochen oder vorgenommen wird, kommt hierher. Auch wenn etwas nicht klappt, bleibt es ehrlich stehen.</p>
+      <form class="addrow" id="form-promise">
+        <input type="text" id="f-promise-text" placeholder="z. B. Ich plane unser Date für Samstag" aria-label="Neues Versprechen">
+        <button class="btn primary" type="submit">Festhalten</button>
+      </form>
+      <div id="list-promises" data-live>
+        <p class="empty">Noch nichts festgehalten. Das erste Versprechen trägst du oben ein.</p>
+      </div>
+    </section>
+
+    <section class="panel" id="tab-vertrauen" role="tabpanel" aria-labelledby="tab-btn-vertrauen" hidden>
+      <p class="intro">Wünsche, die helfen, wieder Vertrauen aufzubauen. Ergänzen, umformulieren oder streichen geht jederzeit. Wenn dir auffällt, dass einer davon umgesetzt wurde, tipp auf „Gemerkt“.</p>
+      <div id="trust-review" data-live></div>
+      <div id="list-trust" data-live>
+        <p class="empty">Hier steht gleich eure Liste. Eigene Wünsche fügst du unten hinzu.</p>
+      </div>
+      <h2 class="sec-h">Wunsch hinzufügen</h2>
+      <form class="addrow" id="form-trust">
+        <input type="text" id="f-trust-text" placeholder="z. B. Ruf mich an, wenn du später kommst" aria-label="Neuer Wunsch">
+        <select id="f-trust-cat" aria-label="Bereich">
+          <option>Weitere Wünsche</option>
+          <option>Verlässlichkeit</option>
+          <option>Offenheit</option>
+          <option>Fürsorge</option>
+          <option>Größere Schritte</option>
+        </select>
+        <button class="btn primary" type="submit">Hinzufügen</button>
+      </form>
+    </section>
+
+    <section class="panel" id="tab-gespraeche" role="tabpanel" aria-labelledby="tab-btn-gespraeche" hidden>
+      <h2 class="sec-h">Für das nächste Gespräch</h2>
+      <form class="addrow" id="form-topic">
+        <input type="text" id="f-topic-text" placeholder="Ein Thema, das nicht verloren gehen soll" aria-label="Neues Thema">
+        <button class="btn primary" type="submit">Merken</button>
+      </form>
+      <div id="list-topics" data-live>
+        <p class="empty">Noch keine Themen. Was euch unter der Woche einfällt, kann hier warten.</p>
+      </div>
+
+      <details class="flow">
+        <summary>So läuft euer Gespräch</summary>
+        <ol>
+          <li>Check-in: Wie geht es jedem gerade mit uns, auf einer Skala von 1 bis 10?</li>
+          <li>Rückblick: Was wurde diese Woche gehalten, was nicht?</li>
+          <li>Ein Thema, abwechselnd ausgesucht</li>
+          <li>Raum für alles, was sonst noch da ist</li>
+          <li>Zum Schluss etwas Schönes zusammen</li>
+        </ol>
+      </details>
+
+      <h2 class="sec-h">Gespräch festhalten</h2>
+      <form class="form-grid" id="form-session">
+        <div class="two">
+          <div class="field"><label for="f-s-date">Datum</label><input type="date" id="f-s-date"></div>
+          <div class="field"><label for="f-s-checkin">Check-in</label><input type="text" id="f-s-checkin" placeholder="z. B. 6 und 4"></div>
+        </div>
+        <div class="field"><label for="f-s-talked">Worüber wir gesprochen haben</label><textarea id="f-s-talked" rows="3"></textarea></div>
+        <div class="field"><label for="f-s-agreed">Was wir vereinbart haben</label><textarea id="f-s-agreed" rows="2"></textarea></div>
+        <div><button class="btn primary" type="submit">Speichern</button></div>
+      </form>
+
+      <h2 class="sec-h">Bisherige Gespräche</h2>
+      <div id="list-sessions" data-live>
+        <p class="empty">Nach eurem ersten Gespräch steht es hier.</p>
+      </div>
+    </section>
+
+    <section class="panel" id="tab-fragen" role="tabpanel" aria-labelledby="tab-btn-fragen" hidden>
+      <p class="intro">Hier darf jederzeit alles gefragt werden. Die Antwort kommt hier oder im nächsten Gespräch.</p>
+      <form class="composer" id="form-question">
+        <label class="comp-label" for="f-question-text">Eine Frage</label>
+        <textarea id="f-question-text" rows="2" placeholder="Was möchtest du wissen?"></textarea>
+        <div class="comp-foot"><span class="hint">Auch Fragen, die schwer zu stellen sind.</span><button class="btn primary" type="submit">Frage stellen</button></div>
+      </form>
+      <div id="list-questions" data-live>
+        <p class="empty">Noch keine Fragen. Alles darf gefragt werden.</p>
+      </div>
+    </section>
+  </main>
+
+  <div class="foot"><button class="link" id="forget" type="button">Auf diesem Gerät abmelden</button></div>
+</div>
+
+<div class="toast" id="toast" role="status" aria-live="polite" hidden></div>
+
+<script>
+/* ---------- Verbindung zu Supabase (öffentlicher Schlüssel, die Daten schützt der persönliche Link) ---------- */
+var SUPABASE_URL = "https://mrzdxzkzoktormyulxux.supabase.co";
+var SUPABASE_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im1yemR4emt6b2t0b3JteXVseHV4Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODI0NzI4NjIsImV4cCI6MjA5ODA0ODg2Mn0.P7xqJDKkhwhyahQCXGEZvjEyzfDaSeKv2D_0mjC_wQs";
+
+(function(){
+  "use strict";
+  var byId = function(id){ return document.getElementById(id); };
+  function esc(s){ return String(s == null ? "" : s).replace(/[&<>"']/g, function(c){ return {"&":"&amp;","<":"&lt;",">":"&gt;","\"":"&quot;","'":"&#39;"}[c]; }); }
+  function pad(n){ return String(n).padStart(2, "0"); }
+  function dayKey(d){ d = d || new Date(); return d.getFullYear() + "-" + pad(d.getMonth()+1) + "-" + pad(d.getDate()); }
+  function parseKey(k){ var p = String(k).split("-").map(Number); return new Date(p[0], (p[1]||1)-1, p[2]||1); }
+  var fmtLong = new Intl.DateTimeFormat("de-DE", {weekday:"long", day:"numeric", month:"long"});
+  var fmtDM = new Intl.DateTimeFormat("de-DE", {day:"numeric", month:"long"});
+  function fmtShort(ms){ var d = new Date(ms); return pad(d.getDate()) + "." + pad(d.getMonth()+1) + "."; }
+  function fmtTime(ms){ var d = new Date(ms); return pad(d.getHours()) + ":" + pad(d.getMinutes()); }
+  function dayLabel(k){
+    var y = new Date(); y.setDate(y.getDate()-1);
+    if (k === dayKey()) return "Heute";
+    if (k === dayKey(y)) return "Gestern";
+    return fmtLong.format(parseKey(k));
+  }
+  function rid(){ return Math.random().toString(36).slice(2, 9) + Date.now().toString(36); }
+  var store = {
+    get: function(k){ try { return localStorage.getItem(k); } catch(e){ return null; } },
+    set: function(k, v){ try { if (v) localStorage.setItem(k, v); else localStorage.removeItem(k); } catch(e){} }
+  };
+
+  /* ---------- Zugang ---------- */
+  function tokenFrom(text){ var m = String(text || "").match(/[a-f0-9]{48}/i); return m ? m[0].toLowerCase() : null; }
+  var token = tokenFrom(location.hash) || store.get("ur-token");
+  if (tokenFrom(location.hash)) store.set("ur-token", token);
+
+  async function rpc(name, args){
+    var res = await fetch(SUPABASE_URL + "/rest/v1/rpc/" + name, {
+      method: "POST",
+      headers: {"apikey": SUPABASE_KEY, "Authorization": "Bearer " + SUPABASE_KEY, "Content-Type": "application/json"},
+      body: JSON.stringify(Object.assign({p_token: token}, args || {}))
+    });
+    var text = await res.text();
+    var body = null; try { body = text ? JSON.parse(text) : null; } catch(_) {}
+    if (!res.ok) {
+      var msg = (body && body.message) || ("Fehler " + res.status);
+      var err = new Error(msg); err.code = /Zugang/.test(msg) ? "denied" : (res.status >= 500 ? "unavailable" : "error");
+      throw err;
+    }
+    return body;
+  }
+
+  var ICON = {
+    heart: '<svg viewBox="0 0 24 24" aria-hidden="true"><path fill="currentColor" d="M12 20.6s-7.6-4.5-9.4-9.3C1.3 7.9 3.4 4.4 7 4.4c2 0 3.5 1.1 5 2.8 1.5-1.7 3-2.8 5-2.8 3.6 0 5.7 3.5 4.4 6.9-1.8 4.8-9.4 9.3-9.4 9.3z"/></svg>',
+    heartOutline: '<svg viewBox="0 0 24 24" aria-hidden="true"><path fill="none" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round" d="M12 20.1s-7.2-4.3-8.9-8.8C1.9 8.1 3.8 5 7 5c1.9 0 3.4 1.1 5 2.9C13.6 6.1 15.1 5 17 5c3.2 0 5.1 3.1 3.9 6.3-1.7 4.5-8.9 8.8-8.9 8.8z"/></svg>',
+    star: '<svg viewBox="0 0 24 24" aria-hidden="true"><path fill="currentColor" d="M12 1.5c.7 6 3.6 9.3 10.5 10.5-6.9 1.2-9.8 4.5-10.5 10.5-.7-6-3.6-9.3-10.5-10.5C8.4 10.8 11.3 7.5 12 1.5z"/></svg>'
+  };
+  var PROMPTS = [
+    "Heute hab ich mich … gefühlt, als …",
+    "Was hat dich heute beschäftigt?",
+    "Gab es heute einen Moment, in dem du dich zurückziehen wolltest?",
+    "Was war heute schön zwischen euch?",
+    "Wofür warst du heute dankbar?",
+    "Was war heute unangenehm, und was hast du damit gemacht?",
+    "Was möchtest du heute noch sagen?"
+  ];
+  var CATS = ["Verlässlichkeit", "Offenheit", "Fürsorge", "Größere Schritte", "Weitere Wünsche"];
+  var KINDS = ["entries", "promises", "trust", "topics", "sessions", "questions"];
+
+  var state = {entries:[], promises:[], trust:[], topics:[], sessions:[], questions:[]};
+  var loaded = false, me = null, members = [];
+  var ui = {open:{}, drafts:{}, confirm:null, tab:"gedanken"};
+
+  function find(col, id){ for (var i = 0; i < state[col].length; i++) if (state[col][i].id === id) return state[col][i]; return null; }
+  function draftOr(id, fb){ return Object.prototype.hasOwnProperty.call(ui.drafts, id) ? ui.drafts[id] : (fb || ""); }
+  function member(id){ for (var i = 0; i < members.length; i++) if (members[i].id === id) return {m: members[i], i: i}; return null; }
+  function who(id){ if (!id) return ""; if (id === me) return "Du"; var x = member(id); return (x && x.m.name) || "Jemand"; }
+  function avatar(id){
+    var x = member(id); if (!x) return "";
+    var ch = (x.m.name || "?").trim().charAt(0).toUpperCase();
+    return '<span class="av' + (x.i % 2 ? " alt" : "") + '" aria-hidden="true">' + esc(ch) + '</span>';
+  }
+  function delCtl(col, id, label){
+    var key = col + ":" + id;
+    if (ui.confirm === key) {
+      return '<span class="confirm">Wirklich löschen? <button class="link danger" data-act="del-yes" data-col="' + col + '" data-id="' + esc(id) + '">Ja, löschen</button><button class="link" data-act="del-no">Abbrechen</button></span>';
+    }
+    return '<button class="link" data-act="del-ask" data-col="' + col + '" data-id="' + esc(id) + '">' + (label || "Löschen") + '</button>';
+  }
+  function openBtn(key, focus, label){ return '<button class="link" data-act="open" data-key="' + key + '" data-focus="' + focus + '">' + label + '</button>'; }
+  function closeBtn(key, focus){ return '<button class="link" data-act="close" data-key="' + key + '" data-focus="' + focus + '">Abbrechen</button>'; }
+
+  /* ---------- Toast & Hinweise ---------- */
+  var toastTimer = null;
+  function toast(msg){
+    var t = byId("toast"); t.textContent = msg; t.hidden = false;
+    clearTimeout(toastTimer); toastTimer = setTimeout(function(){ t.hidden = true; }, 2600);
+  }
+  function notice(msg){ var n = byId("notice"); n.textContent = msg || ""; n.hidden = !msg; }
+
+  /* ---------- Laden & Schreiben ---------- */
+  function sleep(ms){ return new Promise(function(r){ setTimeout(r, ms); }); }
+  var loading = null;
+  function reload(){
+    if (loading) return loading;
+    loading = (async function(){
+      try {
+        var res = await rpc("ur_load");
+        me = res.me; members = res.members || [];
+        var next = {entries:[], promises:[], trust:[], topics:[], sessions:[], questions:[]};
+        (res.items || []).forEach(function(it){
+          if (!next[it.kind]) return;
+          var o = Object.assign({}, it.data); o.id = it.id; o.author = it.author;
+          if (!o.createdAt) o.createdAt = Date.now();
+          next[it.kind].push(o);
+        });
+        next.promises.sort(function(a, b){ return a.createdAt - b.createdAt; });
+        next.trust.sort(function(a, b){ return (a.order || 0) - (b.order || 0); });
+        next.topics.sort(function(a, b){ return a.createdAt - b.createdAt; });
+        next.questions.sort(function(a, b){ return a.createdAt - b.createdAt; });
+        next.sessions.sort(function(a, b){ return String(b.date || "").localeCompare(String(a.date || "")) || b.createdAt - a.createdAt; });
+        next.entries.sort(function(a, b){ return b.createdAt - a.createdAt; });
+        state = next; loaded = true; notice("");
+        showApp(); renderAll();
+      } catch (e) {
+        if (e.code === "denied") { showGate("Dieser Link ist nicht (mehr) gültig. Frag nach einem neuen."); }
+        else notice("Gerade keine Verbindung. Die Seite versucht es gleich wieder.");
+      } finally { loading = null; }
+    })();
+    return loading;
+  }
+  async function guard(fn, okMsg){
+    for (var attempt = 0; attempt < 2; attempt++) {
+      try { await fn(); if (okMsg) toast(okMsg); reload(); return true; }
+      catch (e) {
+        if (e.code === "unavailable" && attempt === 0) { await sleep(600 + Math.random()*600); continue; }
+        if (e.code === "denied") { showGate("Dieser Link ist nicht (mehr) gültig. Frag nach einem neuen."); return false; }
+        toast(e.code === "unavailable" ? "Gerade keine Verbindung. Versuch es gleich noch einmal." : "Das hat nicht geklappt. Versuch es noch einmal.");
+        return false;
+      }
+    }
+    return false;
+  }
+  function add(kind, data){ return rpc("ur_put", {p_kind: kind, p_id: null, p_data: data, p_merge: true}); }
+  function patch(kind, id, data){ return rpc("ur_put", {p_kind: kind, p_id: id, p_data: data, p_merge: true}); }
+  function remove(id){ return rpc("ur_delete", {p_id: id}); }
+  function localPatch(col, id, data){ var d = find(col, id); if (d) Object.assign(d, data); renderAll(); }
+
+  /* ---------- Render: Gedanken ---------- */
+  function entryHTML(e){
+    var mine = me && e.author === me;
+    var hearts = e.hearts || [];
+    var iHeart = !!me && hearts.indexOf(me) !== -1;
+    var others = hearts.filter(function(x){ return x !== me; });
+    var editKey = "edit-" + e.id, editId = "f-edit-" + e.id;
+    var replyKey = "reply-" + e.id, replyId = "f-reply-" + e.id;
+    var h = '<article class="card">';
+    h += '<div class="who">' + avatar(e.author) + '<strong>' + esc(who(e.author)) + '</strong><span class="meta">' + fmtTime(e.createdAt) + (e.editedAt ? " · bearbeitet" : "") + '</span></div>';
+    if (ui.open[editKey]) {
+      h += '<div class="inline"><textarea id="' + editId + '" data-draft rows="3" aria-label="Eintrag bearbeiten">' + esc(draftOr(editId, e.text)) + '</textarea>';
+      h += '<div class="row"><button class="btn small primary" data-act="edit-save" data-id="' + esc(e.id) + '">Speichern</button>' + closeBtn(editKey, editId) + '</div></div>';
+    } else {
+      h += '<p class="text">' + esc(e.text) + '</p>';
+    }
+    var reps = e.replies || [];
+    if (reps.length) {
+      h += '<div class="replies">';
+      reps.forEach(function(r){
+        h += '<div class="reply"><div class="who">' + avatar(r.author) + '<strong>' + esc(who(r.author)) + '</strong><span class="meta">' + fmtShort(r.createdAt) + ' ' + fmtTime(r.createdAt) + '</span>';
+        if (me && r.author === me) {
+          var rk = "reply:" + e.id + ":" + r.id;
+          h += ui.confirm === rk
+            ? '<span class="confirm">Löschen? <button class="link danger" data-act="reply-del" data-id="' + esc(e.id) + '" data-rid="' + esc(r.id) + '">Ja</button><button class="link" data-act="del-no">Nein</button></span>'
+            : '<button class="link" data-act="reply-ask" data-id="' + esc(e.id) + '" data-rid="' + esc(r.id) + '">Löschen</button>';
+        }
+        h += '</div><p class="text">' + esc(r.text) + '</p></div>';
+      });
+      h += '</div>';
+    }
+    if (ui.open[replyKey]) {
+      h += '<div class="inline"><textarea id="' + replyId + '" data-draft rows="2" placeholder="Deine Antwort" aria-label="Antwort">' + esc(draftOr(replyId, "")) + '</textarea>';
+      h += '<div class="row"><button class="btn small primary" data-act="reply-send" data-id="' + esc(e.id) + '">Antworten</button>' + closeBtn(replyKey, replyId) + '</div></div>';
+    }
+    h += '<div class="acts">';
+    if (!mine) h += '<button class="link heart-btn" data-act="heart" data-id="' + esc(e.id) + '" aria-pressed="' + iHeart + '" aria-label="' + (iHeart ? "Herz entfernen" : "Herz geben") + '">' + (iHeart ? ICON.heart : ICON.heartOutline) + '</button>';
+    if (others.length) h += '<span class="heart-note">' + ICON.heart + esc(others.map(who).join(", ")) + '</span>';
+    if (!ui.open[replyKey]) h += openBtn(replyKey, replyId, "Antworten");
+    if (mine && !ui.open[editKey]) h += openBtn(editKey, editId, "Bearbeiten") + delCtl("entries", e.id);
+    h += '</div></article>';
+    return h;
+  }
+  function renderEntries(){
+    var el = byId("list-entries");
+    if (!state.entries.length) { el.innerHTML = '<p class="empty">Hier erscheinen eure Gedanken, nach Tagen sortiert. Den ersten schreibst du oben.</p>'; return; }
+    var groups = [], idx = {};
+    state.entries.forEach(function(e){
+      var k = e.day || dayKey(new Date(e.createdAt));
+      if (!(k in idx)) { idx[k] = groups.length; groups.push({k:k, list:[]}); }
+      groups[idx[k]].list.push(e);
+    });
+    el.innerHTML = groups.map(function(g){
+      return '<section class="day"><h3 class="day-h">' + esc(dayLabel(g.k)) + '</h3>' + g.list.map(entryHTML).join("") + '</section>';
+    }).join("");
+  }
+
+  /* ---------- Render: Versprechen ---------- */
+  function promiseHTML(p){
+    var noteKey = "note-" + p.id, noteId = "f-note-" + p.id;
+    var h = '<article class="card">';
+    h += '<p class="text">' + esc(p.text) + '</p>';
+    var meta = 'Festgehalten am ' + fmtShort(p.createdAt);
+    if (p.status && p.status !== "offen" && p.statusAt) meta += ' · abgeschlossen am ' + fmtShort(p.statusAt);
+    h += '<div class="row"><span class="meta">' + meta + '</span>';
+    if (p.status === "gehalten") h += '<span class="pill ok">Gehalten</span>';
+    if (p.status === "nicht") h += '<span class="pill warn">Nicht geschafft</span>';
+    h += '</div>';
+    if (p.status === "nicht") {
+      if (ui.open[noteKey]) {
+        h += '<div class="inline"><textarea id="' + noteId + '" data-draft rows="2" placeholder="Was ist passiert, und was machst du jetzt?" aria-label="Notiz">' + esc(draftOr(noteId, p.note)) + '</textarea>';
+        h += '<div class="row"><button class="btn small primary" data-act="note-save" data-id="' + esc(p.id) + '">Speichern</button>' + closeBtn(noteKey, noteId) + '</div></div>';
+      } else if (p.note) {
+        h += '<p class="note">' + esc(p.note) + '</p>';
+      }
+    }
+    h += '<div class="acts">';
+    if (!p.status || p.status === "offen") {
+      h += '<button class="link" data-act="pstatus" data-status="gehalten" data-id="' + esc(p.id) + '">Gehalten</button>';
+      h += '<button class="link" data-act="pstatus" data-status="nicht" data-id="' + esc(p.id) + '">Nicht geschafft</button>';
+    } else {
+      if (p.status === "nicht" && !ui.open[noteKey]) h += openBtn(noteKey, noteId, p.note ? "Notiz ändern" : "Was ist passiert?");
+      h += '<button class="link" data-act="pstatus" data-status="offen" data-id="' + esc(p.id) + '">Wieder öffnen</button>';
+    }
+    h += delCtl("promises", p.id) + '</div></article>';
+    return h;
+  }
+  function renderPromises(){
+    var el = byId("list-promises");
+    if (!state.promises.length) { el.innerHTML = '<p class="empty">Noch nichts festgehalten. Das erste Versprechen trägst du oben ein.</p>'; return; }
+    var open = state.promises.filter(function(p){ return !p.status || p.status === "offen"; });
+    var done = state.promises.filter(function(p){ return p.status && p.status !== "offen"; })
+      .sort(function(a, b){ return (b.statusAt || 0) - (a.statusAt || 0); });
+    var h = '<div class="list"><h2 class="sec-h">Offen</h2>';
+    h += open.length ? open.map(promiseHTML).join("") : '<p class="empty">Gerade ist nichts offen.</p>';
+    h += '</div>';
+    if (done.length) h += '<div class="list" style="margin-top:18px"><h2 class="sec-h">Abgeschlossen</h2>' + done.map(promiseHTML).join("") + '</div>';
+    el.innerHTML = h;
+  }
+
+  /* ---------- Render: Vertrauen ---------- */
+  function trustHTML(t){
+    var editKey = "tedit-" + t.id, editId = "f-tedit-" + t.id;
+    var noticed = (t.noticed || []).slice().sort(function(a, b){ return a.at - b.at; });
+    var today = dayKey();
+    var mineToday = !!me && noticed.some(function(n){ return n.by === me && dayKey(new Date(n.at)) === today; });
+    var h = '<article class="card">';
+    if (ui.open[editKey]) {
+      h += '<div class="inline"><textarea id="' + editId + '" data-draft rows="2" aria-label="Wunsch ändern">' + esc(draftOr(editId, t.text)) + '</textarea>';
+      h += '<div class="row"><button class="btn small primary" data-act="trust-save" data-id="' + esc(t.id) + '">Speichern</button>' + closeBtn(editKey, editId) + '</div></div>';
+    } else {
+      h += '<p class="text">' + esc(t.text) + '</p>';
+    }
+    if (noticed.length) {
+      h += '<div class="chips" aria-label="Gemerkt am">' + noticed.slice(-12).map(function(n){
+        return '<span class="chip" title="' + esc(who(n.by) ? "Gemerkt von " + who(n.by) : "Gemerkt") + '">' + fmtShort(n.at) + '</span>';
+      }).join("") + '</div>';
+    }
+    h += '<div class="trust-foot"><button class="btn small" data-act="notice" data-id="' + esc(t.id) + '" aria-pressed="' + mineToday + '">' + ICON.star + (mineToday ? "Heute gemerkt" : "Gemerkt") + '</button>';
+    h += '<div class="acts">' + (ui.open[editKey] ? "" : openBtn(editKey, editId, "Ändern")) + delCtl("trust", t.id, "Entfernen") + '</div></div>';
+    h += '</article>';
+    return h;
+  }
+  function renderTrust(){
+    var el = byId("list-trust"), rv = byId("trust-review");
+    if (!state.trust.length) {
+      el.innerHTML = '<p class="empty">Noch keine Wünsche auf der Liste. Den ersten fügst du unten hinzu.</p>';
+      rv.innerHTML = ""; return;
+    }
+    var first = Math.min.apply(null, state.trust.map(function(t){ return t.createdAt || Date.now(); }));
+    var due = new Date(first); due.setDate(due.getDate() + 30);
+    rv.innerHTML = '<div class="review">' + ICON.star + '<span>' + (Date.now() >= due.getTime()
+      ? "Zeit für euren gemeinsamen Rückblick: Was bleibt, was kommt dazu, was fällt weg?"
+      : "Gemeinsamer Rückblick ab " + esc(fmtDM.format(due)) + ": Was bleibt, was kommt dazu, was fällt weg?") + '</span></div>';
+    var groups = {};
+    state.trust.forEach(function(t){ var c = CATS.indexOf(t.category) === -1 ? "Weitere Wünsche" : t.category; (groups[c] = groups[c] || []).push(t); });
+    el.innerHTML = '<div class="list">' + CATS.filter(function(c){ return groups[c]; }).map(function(c){
+      return '<h3 class="cat-h">' + esc(c) + '</h3>' + groups[c].map(trustHTML).join("");
+    }).join("") + '</div>';
+  }
+
+  /* ---------- Render: Gespräche ---------- */
+  function topicHTML(t){
+    var h = '<article class="card"><p class="text' + (t.done ? " done-text" : "") + '">' + esc(t.text) + '</p>';
+    h += '<div class="row"><span class="meta">' + (t.author ? esc(who(t.author)) + ", " : "") + fmtShort(t.createdAt) + '</span></div>';
+    h += '<div class="acts"><button class="link" data-act="topic-done" data-id="' + esc(t.id) + '">' + (t.done ? "Wieder öffnen" : "Besprochen") + '</button>' + delCtl("topics", t.id) + '</div></article>';
+    return h;
+  }
+  function renderTopics(){
+    var el = byId("list-topics");
+    var open = state.topics.filter(function(t){ return !t.done; });
+    var done = state.topics.filter(function(t){ return t.done; }).sort(function(a, b){ return (b.doneAt || 0) - (a.doneAt || 0); });
+    var h = open.length ? '<div class="list">' + open.map(topicHTML).join("") + '</div>'
+      : '<p class="empty">Noch keine offenen Themen. Was euch unter der Woche einfällt, kann hier warten.</p>';
+    if (done.length) {
+      h += '<details class="done-list" data-key="topics-done"' + (ui.open["topics-done"] ? " open" : "") + ' style="margin-top:12px"><summary>Schon besprochen</summary><div class="list">' + done.map(topicHTML).join("") + '</div></details>';
+    }
+    el.innerHTML = h;
+  }
+  function sessionHTML(s){
+    var key = "sess-" + s.id, editKey = "sedit-" + s.id;
+    var label = s.date ? fmtLong.format(parseKey(s.date)) : fmtLong.format(new Date(s.createdAt));
+    var h = '<details class="sess" data-key="' + key + '"' + (ui.open[key] ? " open" : "") + '>';
+    h += '<summary><span>' + esc(label) + '</span>' + (s.checkin ? '<span class="meta">Check-in: ' + esc(s.checkin) + '</span>' : "") + '</summary>';
+    h += '<div class="sess-body">';
+    if (ui.open[editKey]) {
+      var c = "f-sc-" + s.id, t = "f-st-" + s.id, a = "f-sa-" + s.id;
+      h += '<div class="inline"><div class="field"><label for="' + c + '">Check-in</label><input type="text" id="' + c + '" data-draft value="' + esc(draftOr(c, s.checkin)) + '"></div>';
+      h += '<div class="field"><label for="' + t + '">Worüber wir gesprochen haben</label><textarea id="' + t + '" data-draft rows="3">' + esc(draftOr(t, s.talked)) + '</textarea></div>';
+      h += '<div class="field"><label for="' + a + '">Was wir vereinbart haben</label><textarea id="' + a + '" data-draft rows="2">' + esc(draftOr(a, s.agreed)) + '</textarea></div>';
+      h += '<div class="row"><button class="btn small primary" data-act="sess-save" data-id="' + esc(s.id) + '">Speichern</button>' + closeBtn(editKey, [c, t, a].join(",")) + '</div></div>';
+    } else {
+      if (s.talked) h += '<div><h4>Worüber wir gesprochen haben</h4><p class="text">' + esc(s.talked) + '</p></div>';
+      if (s.agreed) h += '<div><h4>Was wir vereinbart haben</h4><p class="text">' + esc(s.agreed) + '</p></div>';
+      h += '<div class="acts">' + openBtn(editKey, "f-st-" + s.id, "Bearbeiten") + delCtl("sessions", s.id) + '</div>';
+    }
+    h += '</div></details>';
+    return h;
+  }
+  function renderSessions(){
+    var el = byId("list-sessions");
+    el.innerHTML = state.sessions.length ? '<div class="list">' + state.sessions.map(sessionHTML).join("") + '</div>'
+      : '<p class="empty">Nach eurem ersten Gespräch steht es hier.</p>';
+  }
+
+  /* ---------- Render: Fragen ---------- */
+  function questionHTML(q){
+    var ansKey = "ans-" + q.id, ansId = "f-ans-" + q.id;
+    var answered = !!q.answer || !!q.inPerson;
+    var h = '<article class="card"><p class="text">' + esc(q.text) + '</p>';
+    h += '<div class="row"><span class="meta">' + (q.author ? esc(who(q.author)) + ", " : "") + fmtShort(q.createdAt) + '</span>';
+    if (q.inPerson && !q.answer) h += '<span class="pill neutral">Im Gespräch beantwortet</span>';
+    if (!answered) h += '<span class="pill warn">Offen</span>';
+    h += '</div>';
+    if (ui.open[ansKey]) {
+      h += '<div class="inline"><textarea id="' + ansId + '" data-draft rows="3" placeholder="Deine ehrliche Antwort" aria-label="Antwort">' + esc(draftOr(ansId, q.answer)) + '</textarea>';
+      h += '<div class="row"><button class="btn small primary" data-act="answer-send" data-id="' + esc(q.id) + '">Antwort teilen</button>' + closeBtn(ansKey, ansId) + '</div></div>';
+    } else if (q.answer) {
+      h += '<div class="answer"><div class="who">' + avatar(q.answeredBy) + '<strong>' + esc(who(q.answeredBy) || "Antwort") + '</strong><span class="meta">' + (q.answeredAt ? fmtShort(q.answeredAt) : "") + '</span></div><p class="text">' + esc(q.answer) + '</p></div>';
+    }
+    h += '<div class="acts">';
+    if (!ui.open[ansKey]) {
+      if (!answered) {
+        h += openBtn(ansKey, ansId, "Antworten");
+        h += '<button class="link" data-act="inperson" data-id="' + esc(q.id) + '">Im Gespräch beantwortet</button>';
+      } else {
+        h += openBtn(ansKey, ansId, q.answer ? "Antwort ändern" : "Antwort ergänzen");
+      }
+    }
+    if (me && q.author === me) h += delCtl("questions", q.id);
+    h += '</div></article>';
+    return h;
+  }
+  function renderQuestions(){
+    var el = byId("list-questions");
+    if (!state.questions.length) { el.innerHTML = '<p class="empty">Noch keine Fragen. Alles darf gefragt werden.</p>'; return; }
+    var open = state.questions.filter(function(q){ return !q.answer && !q.inPerson; });
+    var done = state.questions.filter(function(q){ return q.answer || q.inPerson; }).sort(function(a, b){ return (b.answeredAt || b.createdAt) - (a.answeredAt || a.createdAt); });
+    var h = '';
+    if (open.length) h += '<div class="list"><h2 class="sec-h">Offen</h2>' + open.map(questionHTML).join("") + '</div>';
+    if (done.length) h += '<div class="list"' + (open.length ? ' style="margin-top:18px"' : '') + '><h2 class="sec-h">Beantwortet</h2>' + done.map(questionHTML).join("") + '</div>';
+    el.innerHTML = h;
+  }
+
+  /* ---------- Alles zeichnen ---------- */
+  function renderAll(){
+    if (!loaded) return;
+    var a = document.activeElement, fid = null, s = null, e = null;
+    if (a && a.id && a.id.indexOf("f-") === 0 && a.closest && a.closest("[data-live]")) {
+      fid = a.id; try { s = a.selectionStart; e = a.selectionEnd; } catch(_){}
+    }
+    renderEntries(); renderPromises(); renderTrust(); renderTopics(); renderSessions(); renderQuestions();
+    if (fid) {
+      var n = byId(fid);
+      if (n) { n.focus({preventScroll:true}); try { if (s != null) n.setSelectionRange(s, e); } catch(_){} }
+    }
+  }
+  function focusLater(id){ if (!id) return; requestAnimationFrame(function(){ var n = byId(id); if (n) n.focus(); }); }
+
+  /* ---------- Aktionen ---------- */
+  document.addEventListener("input", function(ev){
+    var t = ev.target;
+    if (t && t.hasAttribute && t.hasAttribute("data-draft")) ui.drafts[t.id] = t.value;
+  });
+  document.addEventListener("toggle", function(ev){
+    var d = ev.target;
+    if (d && d.dataset && d.dataset.key) { if (d.open) ui.open[d.dataset.key] = true; else delete ui.open[d.dataset.key]; }
+  }, true);
+
+  function val(id){ var n = byId(id); return n ? n.value.trim() : ""; }
+  function closeEditor(key, ids){ delete ui.open[key]; (ids || []).forEach(function(i){ delete ui.drafts[i]; }); renderAll(); }
+
+  document.addEventListener("click", async function(ev){
+    var t = ev.target.closest ? ev.target.closest("[data-act],[data-tab]") : null;
+    if (!t) return;
+    if (t.dataset.tab) { setTab(t.dataset.tab, true); return; }
+    var act = t.dataset.act, id = t.dataset.id, col = t.dataset.col, doc;
+    switch (act) {
+      case "open":
+        ui.open[t.dataset.key] = true; renderAll(); focusLater(t.dataset.focus); break;
+      case "close":
+        closeEditor(t.dataset.key, String(t.dataset.focus || "").split(",")); break;
+      case "del-ask": ui.confirm = col + ":" + id; renderAll(); break;
+      case "del-no": ui.confirm = null; renderAll(); break;
+      case "del-yes":
+        ui.confirm = null;
+        state[col] = state[col].filter(function(x){ return x.id !== id; }); renderAll();
+        await guard(function(){ return remove(id); }, "Gelöscht");
+        break;
+      case "heart":
+        doc = find("entries", id); if (!doc || !me) return;
+        var hs = (doc.hearts || []).slice(), i = hs.indexOf(me);
+        if (i === -1) hs.push(me); else hs.splice(i, 1);
+        localPatch("entries", id, {hearts: hs});
+        await guard(function(){ return patch("entries", id, {hearts: hs}); });
+        break;
+      case "reply-send":
+        doc = find("entries", id); var rt = val("f-reply-" + id); if (!doc || !rt) return;
+        var reps = (doc.replies || []).concat([{id: rid(), author: me, text: rt, createdAt: Date.now()}]);
+        if (await guard(function(){ return patch("entries", id, {replies: reps}); })) { localPatch("entries", id, {replies: reps}); closeEditor("reply-" + id, ["f-reply-" + id]); }
+        break;
+      case "reply-ask": ui.confirm = "reply:" + id + ":" + t.dataset.rid; renderAll(); break;
+      case "reply-del":
+        ui.confirm = null; doc = find("entries", id); if (!doc) { renderAll(); return; }
+        var left = (doc.replies || []).filter(function(r){ return r.id !== t.dataset.rid; });
+        localPatch("entries", id, {replies: left});
+        await guard(function(){ return patch("entries", id, {replies: left}); });
+        break;
+      case "edit-save":
+        var et = val("f-edit-" + id); if (!et) return;
+        if (await guard(function(){ return patch("entries", id, {text: et, editedAt: Date.now()}); })) { localPatch("entries", id, {text: et, editedAt: Date.now()}); closeEditor("edit-" + id, ["f-edit-" + id]); }
+        break;
+      case "pstatus":
+        var st = t.dataset.status;
+        localPatch("promises", id, {status: st, statusAt: Date.now()});
+        if (st === "nicht") { ui.open["note-" + id] = true; renderAll(); focusLater("f-note-" + id); }
+        await guard(function(){ return patch("promises", id, {status: st, statusAt: Date.now()}); });
+        break;
+      case "note-save":
+        var nt = val("f-note-" + id);
+        if (await guard(function(){ return patch("promises", id, {note: nt}); })) { localPatch("promises", id, {note: nt}); closeEditor("note-" + id, ["f-note-" + id]); }
+        break;
+      case "notice":
+        doc = find("trust", id); if (!doc) return;
+        var today = dayKey(), list = (doc.noticed || []).slice(), mineIdx = -1;
+        list.forEach(function(n, k){ if (n.by === me && dayKey(new Date(n.at)) === today) mineIdx = k; });
+        if (mineIdx === -1) list.push({by: me, at: Date.now()}); else list.splice(mineIdx, 1);
+        localPatch("trust", id, {noticed: list});
+        await guard(function(){ return patch("trust", id, {noticed: list}); });
+        break;
+      case "trust-save":
+        var tt = val("f-tedit-" + id); if (!tt) return;
+        if (await guard(function(){ return patch("trust", id, {text: tt}); })) { localPatch("trust", id, {text: tt}); closeEditor("tedit-" + id, ["f-tedit-" + id]); }
+        break;
+      case "topic-done":
+        doc = find("topics", id); if (!doc) return;
+        var nd = !doc.done;
+        localPatch("topics", id, {done: nd, doneAt: Date.now()});
+        await guard(function(){ return patch("topics", id, {done: nd, doneAt: Date.now()}); });
+        break;
+      case "sess-save":
+        var sc = val("f-sc-" + id), stt = val("f-st-" + id), sa = val("f-sa-" + id);
+        if (await guard(function(){ return patch("sessions", id, {checkin: sc, talked: stt, agreed: sa}); })) { localPatch("sessions", id, {checkin: sc, talked: stt, agreed: sa}); closeEditor("sedit-" + id, ["f-sc-" + id, "f-st-" + id, "f-sa-" + id]); }
+        break;
+      case "answer-send":
+        var at = val("f-ans-" + id); if (!at) return;
+        if (await guard(function(){ return patch("questions", id, {answer: at, answeredBy: me, answeredAt: Date.now()}); })) { localPatch("questions", id, {answer: at, answeredBy: me, answeredAt: Date.now()}); closeEditor("ans-" + id, ["f-ans-" + id]); }
+        break;
+      case "inperson":
+        localPatch("questions", id, {inPerson: true, answeredBy: me, answeredAt: Date.now()});
+        await guard(function(){ return patch("questions", id, {inPerson: true, answeredBy: me, answeredAt: Date.now()}); });
+        break;
+    }
+  });
+
+  /* ---------- Eingabeformulare ---------- */
+  var COMPOSERS = ["f-entry-text", "f-promise-text", "f-trust-text", "f-topic-text", "f-s-checkin", "f-s-talked", "f-s-agreed", "f-question-text"];
+  COMPOSERS.forEach(function(id){
+    var n = byId(id); var saved = store.get("ur-" + id); if (saved) n.value = saved;
+    n.addEventListener("input", function(){ store.set("ur-" + id, n.value); });
+  });
+  function clearField(id){ var n = byId(id); n.value = ""; store.set("ur-" + id, ""); }
+  function onSubmit(id, fn){
+    var form = byId(id);
+    form.addEventListener("submit", async function(e){
+      e.preventDefault();
+      var b = form.querySelector("button[type=submit]"); if (b) b.disabled = true;
+      try { await fn(); } finally { if (b) b.disabled = false; }
+    });
+  }
+  onSubmit("form-entry", async function(){
+    var text = val("f-entry-text"); if (!text) return;
+    if (await guard(function(){ return add("entries", {text: text, createdAt: Date.now(), day: dayKey(), hearts: [], replies: []}); }, "Geteilt")) clearField("f-entry-text");
+  });
+  onSubmit("form-promise", async function(){
+    var text = val("f-promise-text"); if (!text) return;
+    if (await guard(function(){ return add("promises", {text: text, createdAt: Date.now(), status: "offen", note: ""}); }, "Festgehalten")) clearField("f-promise-text");
+  });
+  onSubmit("form-trust", async function(){
+    var text = val("f-trust-text"); if (!text) return;
+    var cat = byId("f-trust-cat").value;
+    var maxOrder = state.trust.reduce(function(m, t){ return Math.max(m, t.order || 0); }, 0);
+    if (await guard(function(){ return add("trust", {text: text, category: cat, order: maxOrder + 1, createdAt: Date.now(), noticed: []}); }, "Hinzugefügt")) clearField("f-trust-text");
+  });
+  onSubmit("form-topic", async function(){
+    var text = val("f-topic-text"); if (!text) return;
+    if (await guard(function(){ return add("topics", {text: text, createdAt: Date.now(), done: false}); }, "Gemerkt")) clearField("f-topic-text");
+  });
+  onSubmit("form-session", async function(){
+    var date = byId("f-s-date").value || dayKey();
+    var c = val("f-s-checkin"), t = val("f-s-talked"), a = val("f-s-agreed");
+    if (!t && !a && !c) { toast("Schreib kurz auf, worüber ihr gesprochen habt."); return; }
+    if (await guard(function(){ return add("sessions", {date: date, checkin: c, talked: t, agreed: a, createdAt: Date.now()}); }, "Gespeichert")) {
+      clearField("f-s-checkin"); clearField("f-s-talked"); clearField("f-s-agreed"); byId("f-s-date").value = dayKey();
+    }
+  });
+  onSubmit("form-question", async function(){
+    var text = val("f-question-text"); if (!text) return;
+    if (await guard(function(){ return add("questions", {text: text, createdAt: Date.now(), answer: "", inPerson: false}); }, "Frage gestellt")) clearField("f-question-text");
+  });
+
+  /* ---------- Reiter ---------- */
+  var TABS = ["gedanken", "versprechen", "vertrauen", "gespraeche", "fragen"];
+  function setTab(name, remember){
+    if (TABS.indexOf(name) === -1) name = "gedanken";
+    ui.tab = name;
+    TABS.forEach(function(t){
+      byId("tab-" + t).hidden = t !== name;
+      var b = byId("tab-btn-" + t); b.setAttribute("aria-selected", String(t === name)); b.tabIndex = t === name ? 0 : -1;
+    });
+    if (remember) store.set("ur-tab", name);
+  }
+  byId("tab-btn-gedanken").parentNode.addEventListener("keydown", function(e){
+    if (e.key !== "ArrowRight" && e.key !== "ArrowLeft") return;
+    var i = TABS.indexOf(ui.tab) + (e.key === "ArrowRight" ? 1 : -1);
+    i = (i + TABS.length) % TABS.length; setTab(TABS[i], true); byId("tab-btn-" + TABS[i]).focus();
+  });
+
+  /* ---------- Zugang anzeigen ---------- */
+  function showGate(msg){
+    byId("app").hidden = true; byId("gate").hidden = false;
+    var err = byId("gate-err"); err.textContent = msg || ""; err.hidden = !msg;
+  }
+  function showApp(){ byId("gate").hidden = true; byId("app").hidden = false; }
+  byId("form-gate").addEventListener("submit", function(e){
+    e.preventDefault();
+    var t = tokenFrom(byId("f-gate").value);
+    if (!t) { showGate("Das sieht nicht nach einem gültigen Link aus."); return; }
+    token = t; store.set("ur-token", t); byId("f-gate").value = "";
+    reload();
+  });
+  byId("forget").addEventListener("click", function(){
+    store.set("ur-token", ""); token = null;
+    try { history.replaceState(null, "", location.pathname); } catch(_) {}
+    showGate("");
+  });
+
+  /* ---------- Start ---------- */
+  byId("today").textContent = fmtLong.format(new Date());
+  byId("f-entry-text").placeholder = PROMPTS[Math.floor(Date.now() / 864e5) % PROMPTS.length];
+  byId("f-s-date").value = dayKey();
+  setTab(store.get("ur-tab") || "gedanken");
+
+  if (!token) { showGate(""); }
+  else { showApp(); reload(); }
+
+  document.addEventListener("visibilitychange", function(){ if (!document.hidden && token) reload(); });
+  setInterval(function(){
+    if (!document.hidden && token && !document.querySelector("[data-live] :focus")) reload();
+  }, 30000);
+})();
+</script>
+</body>
+</html>
